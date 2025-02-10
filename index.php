@@ -1,100 +1,181 @@
 <?php
-// Start a session to manage user login
-session_start();
+// Initialize the course data (static for this example)
+$courses = [
+    ['id' => 1, 'name' => 'Introduction to Programming'],
+    ['id' => 2, 'name' => 'Web Development'],
+    ['id' => 3, 'name' => 'Data Structures'],
+];
+
+$enrollments = [];
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Handle course enrollment
+    if (isset($_POST['enroll'])) {
+        $studentName = $_POST['student_name'];
+        $courseId = $_POST['course_id'];
+
+        $enrollments[] = [
+            'student_name' => $studentName,
+            'course_id' => $courseId
+        ];
+    }
+
+    // Handle attendance marking
+    if (isset($_POST['attendance'])) {
+        $attendance = $_POST['attendance'];
+        // For simplicity, just show the attendance data
+        echo "<div class='alert'>Attendance Marked: " . htmlspecialchars($attendance) . "</div>";
+    }
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    $host = '127.0.0.1';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course Management Portal</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Course Enrollment and Attendance</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f7fc;
+        }
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        .form-container h2 {
+            margin-bottom: 20px;
+        }
+        select, input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #f8f9fa;
+        }
+        .alert {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>Welcome to the Course Management Portal</h1>
-        <?php
-        if(isset($_SESSION['username'])) {
-            echo "<p>Logged in as " . $_SESSION['username'] . "</p>";
-            echo '<a href="logout.php">Logout</a>';
-        } else {
-            echo '<a href="login.php">Login</a> | <a href="register.php">Register</a>';
-        }
-        ?>
-    </header>
 
-    <nav>
-        <ul>
-            <li><a href="courses.php">View Courses</a></li>
-            <li><a href="attendance.php">Attendance</a></li>
-            <li><a href="schedule.php">Class Schedules</a></li>
-            <li><a href="enroll.php">Enroll in a Course</a></li>
-        </ul>
-    </nav>
+<header>
+    <h1>Course Enrollment and Attendance Portal</h1>
+</header>
 
-    <main>
-        <section>
-            <h2>Current Courses</h2>
-            <p>Below are the available courses that you can enroll in:</p>
-            <!-- List of courses will be fetched from the database -->
-            <?php
-            // Example to fetch and display courses (you need to set up a database connection)
-            $db = new mysqli('localhost', 'root', '', 'course_management');
-            if ($db->connect_error) {
-                die("Connection failed: " . $db->connect_error);
-            }
+<div class="container">
+    <!-- Enrollment Form -->
+    <div class="form-container">
+        <h2>Enroll in a Course</h2>
+        <form method="POST">
+            <input type="text" name="student_name" placeholder="Enter student name" required>
+            <select name="course_id" required>
+                <option value="">Select Course</option>
+                <?php foreach ($courses as $course): ?>
+                    <option value="<?= $course['id']; ?>"><?= $course['name']; ?></option>
+                <?php endforeach; ?>
+            </select>
+            <button type="submit" name="enroll">Enroll</button>
+        </form>
+    </div>
 
-            $query = "SELECT * FROM courses";
-            $result = $db->query($query);
+    <!-- Enrolled Students List -->
+    <div class="form-container">
+        <h2>Enrolled Students</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Course</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($enrollments as $enrollment): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($enrollment['student_name']); ?></td>
+                        <td>
+                            <?php
+                            $course = array_filter($courses, fn($course) => $course['id'] == $enrollment['course_id']);
+                            $courseName = current($course)['name'];
+                            echo htmlspecialchars($courseName);
+                            ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 
-            if ($result->num_rows > 0) {
-                echo "<ul>";
-                while ($row = $result->fetch_assoc()) {
-                    echo "<li>" . $row['course_name'] . " - " . $row['course_code'] . "</li>";
-                }
-                echo "</ul>";
-            } else {
-                echo "<p>No courses available at the moment.</p>";
-            }
-            ?>
-        </section>
+    <!-- Attendance Form -->
+    <div class="form-container">
+        <h2>Mark Attendance</h2>
+        <form method="POST">
+            <select name="attendance" required>
+                <option value="">Select Student</option>
+                <?php foreach ($enrollments as $enrollment): ?>
+                    <option value="<?= htmlspecialchars($enrollment['student_name']); ?>">
+                        <?= htmlspecialchars($enrollment['student_name']); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+            <button type="submit" name="attendance">Mark Attendance</button>
+        </form>
+    </div>
+</div>
 
-        <section>
-            <h2>Your Enrollment Status</h2>
-            <p>Check your current course enrollments, attendance, and schedules:</p>
-            <!-- Display student's enrollment status -->
-            <?php
-            if (isset($_SESSION['username'])) {
-                // Fetch student's enrolled courses and attendance
-                $username = $_SESSION['username'];
-                $query = "SELECT courses.course_name, attendance.status FROM enrollments 
-                          JOIN courses ON enrollments.course_id = courses.id
-                          JOIN attendance ON attendance.course_id = courses.id 
-                          WHERE enrollments.student_username = '$username'";
-                
-                $result = $db->query($query);
-
-                if ($result->num_rows > 0) {
-                    while ($row = $result->fetch_assoc()) {
-                        echo "<p>" . $row['course_name'] . " - Attendance: " . $row['status'] . "</p>";
-                    }
-                } else {
-                    echo "<p>You are not enrolled in any courses yet.</p>";
-                }
-            } else {
-                echo "<p>Please log in to view your enrollment status.</p>";
-            }
-            ?>
-        </section>
-    </main>
-
-    <footer>
-        <p>&copy; 2025 Course Management Portal. All rights reserved.</p>
-    </footer>
 </body>
 </html>
+
 
 
 
