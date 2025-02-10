@@ -1,31 +1,5 @@
 <?php
-// Database configuration
-$host = 'localhost';
-$dbname = 'course_management';
-$username = 'root';
-$password = '';
-
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Database connection failed: " . $e->getMessage());
-}
-
-// Fetch courses
-$courses = $pdo->query("SELECT * FROM courses")->fetchAll(PDO::FETCH_ASSOC);
-
-// Handle enrollment form submission
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['enroll'])) {
-    $studentName = $_POST['student_name'];
-    $courseId = $_POST['course_id'];
-
-    $stmt = $pdo->prepare("INSERT INTO enrollments (student_name, course_id) VALUES (?, ?)");
-    $stmt->execute([$studentName, $courseId]);
-
-    echo "<p>Enrollment successful for $studentName!</p>";
-}
-
+// No database integration, purely static website example
 ?>
 
 <!DOCTYPE html>
@@ -51,18 +25,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['enroll'])) {
         <h1>Course Management Portal</h1>
 
         <h2>Enroll in a Course</h2>
-        <form method="POST" action="">
+        <form method="POST" action="#">
             <label for="student_name">Student Name:</label>
             <input type="text" id="student_name" name="student_name" required>
 
             <label for="course_id">Select Course:</label>
             <select id="course_id" name="course_id" required>
                 <option value="">-- Select a Course --</option>
-                <?php foreach ($courses as $course): ?>
-                    <option value="<?php echo $course['id']; ?>">
-                        <?php echo htmlspecialchars($course['course_name']); ?>
-                    </option>
-                <?php endforeach; ?>
+                <option value="1">Mathematics 101</option>
+                <option value="2">Introduction to Programming</option>
+                <option value="3">Physics Basics</option>
             </select>
 
             <button type="submit" name="enroll">Enroll</button>
@@ -77,15 +49,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['enroll'])) {
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($courses as $course): ?>
-                    <tr>
-                        <td><?php echo htmlspecialchars($course['course_name']); ?></td>
-                        <td><?php echo htmlspecialchars($course['schedule']); ?></td>
-                    </tr>
-                <?php endforeach; ?>
+                <tr>
+                    <td>Mathematics 101</td>
+                    <td>Monday & Wednesday, 9:00 AM - 10:30 AM</td>
+                </tr>
+                <tr>
+                    <td>Introduction to Programming</td>
+                    <td>Tuesday & Thursday, 11:00 AM - 12:30 PM</td>
+                </tr>
+                <tr>
+                    <td>Physics Basics</td>
+                    <td>Friday, 2:00 PM - 4:00 PM</td>
+                </tr>
             </tbody>
         </table>
     </div>
 </body>
 </html>
+
 
