@@ -1,85 +1,79 @@
 <?php
-// Handle form submission for the contact form
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['contact_form'])) {
-    $name = htmlspecialchars($_POST['name']);
-    $email = htmlspecialchars($_POST['email']);
-    $message = htmlspecialchars($_POST['message']);
+/**
+ * Template Name: Educational Blog Theme
+ * Author: Your Name
+ * Description: A clean and minimalist WordPress theme for educational content, updates, and announcements.
+ */
 
-    // Here you can process the form, such as sending an email or saving the data to a database
-    echo "<div class='alert success'>Thank you, $name! Your message has been received.</div>";
+// Ensure the WordPress environment is loaded.
+if (!defined('ABSPATH')) exit;
+
+/**
+ * Functions.php file: Theme setup and custom functions.
+ */
+function educational_blog_theme_setup() {
+    // Support for dynamic titles.
+    add_theme_support('title-tag');
+
+    // Support for featured images.
+    add_theme_support('post-thumbnails');
+
+    // Register navigation menus.
+    register_nav_menus([
+        'primary' => __('Primary Menu', 'educational-blog')
+    ]);
 }
-?>
+add_action('after_setup_theme', 'educational_blog_theme_setup');
 
-<!DOCTYPE html>
-<html lang="en">
+function educational_blog_enqueue_styles() {
+    wp_enqueue_style('style', get_stylesheet_uri());
+}
+add_action('wp_enqueue_scripts', 'educational_blog_enqueue_styles');
+
+/**
+ * Header.php: Theme header.
+ */
+?><!DOCTYPE html>
+<html <?php language_attributes(); ?>>
 <head>
-    <meta charset="UTF-8">
+    <meta charset="<?php bloginfo('charset'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Website</title>
-    <link rel="stylesheet" href="style.css">
+    <?php wp_head(); ?>
 </head>
-<body>
-    <!-- Header Section -->
+<body <?php body_class(); ?>>
     <header>
-        <div class="container">
-            <h1>Welcome to My Website</h1>
-            <nav>
-                <ul>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#services">Services</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-            </nav>
-        </div>
+        <nav>
+            <?php wp_nav_menu(['theme_location' => 'primary']); ?>
+        </nav>
     </header>
 
-    <!-- About Section -->
-    <section id="about" class="section">
-        <div class="container">
-            <h2>About Us</h2>
-            <p>This is a simple website built using PHP, HTML, and CSS. Here, you can explore our services, read about us, and contact us.</p>
-        </div>
-    </section>
+<?php
+/**
+ * Index.php: Main template file.
+ */
+if (have_posts()) :
+    while (have_posts()) : the_post(); ?>
+        <article>
+            <h2><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
+            <div><?php the_excerpt(); ?></div>
+        </article>
+    <?php endwhile;
+else : ?>
+    <p><?php _e('No posts found.', 'educational-blog'); ?></p>
+<?php endif; ?>
 
-    <!-- Services Section -->
-    <section id="services" class="section">
-        <div class="container">
-            <h2>Our Services</h2>
-            <ul>
-                <li><strong>Web Development:</strong> We create high-quality websites tailored to your needs.</li>
-                <li><strong>SEO Services:</strong> Improve your website's visibility on search engines.</li>
-                <li><strong>Consulting:</strong> Get professional advice for your business and projects.</li>
-            </ul>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="section">
-        <div class="container">
-            <h2>Contact Us</h2>
-            <form action="index.php" method="POST">
-                <label for="name">Name:</label>
-                <input type="text" name="name" id="name" required>
-
-                <label for="email">Email:</label>
-                <input type="email" name="email" id="email" required>
-
-                <label for="message">Message:</label>
-                <textarea name="message" id="message" required></textarea>
-
-                <button type="submit" name="contact_form">Send Message</button>
-            </form>
-        </div>
-    </section>
-
-    <!-- Footer Section -->
+<?php
+/**
+ * Footer.php: Theme footer.
+ */
+?>
     <footer>
-        <div class="container">
-            <p>&copy; 2025 My Website. All rights reserved.</p>
-        </div>
+        <p>&copy; <?php echo date('Y'); ?> Educational Blog. All rights reserved.</p>
     </footer>
+    <?php wp_footer(); ?>
 </body>
 </html>
+
 
 
 
