@@ -1,109 +1,46 @@
-/* Global Styles */
+
+/* Basic Reset */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-}
-
-.container {
-    width: 80%;
-    margin: 0 auto;
-}
-
-h1, h2 {
+    background-color: #f9f9f9;
     color: #333;
 }
 
-nav ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-nav ul li {
-    display: inline;
-    margin-right: 20px;
-}
-
-nav ul li a {
-    text-decoration: none;
-    color: #333;
-    font-weight: bold;
-}
-
-section {
-    padding: 40px 0;
-}
-
-/* Header Styles */
-header {
-    background-color: #007BFF;
-    color: white;
-    padding: 20px 0;
+.site-header {
+    background: #333;
+    color: #fff;
+    padding: 20px;
     text-align: center;
 }
 
-header h1 {
-    margin: 0;
+.site-header a {
+    color: #fff;
+    text-decoration: none;
 }
 
-/* Section Styles */
-section h2 {
-    color: #007BFF;
-}
-
-section ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-section ul li {
+.main-nav {
     margin: 10px 0;
 }
 
-/* Form Styles */
-form {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 10px;
-    max-width: 400px;
-    margin: 0 auto;
+.post {
+    background: #fff;
+    margin: 20px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-form input, form textarea, form button {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+.post h2 {
+    margin-top: 0;
 }
 
-form button {
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
-
-form button:hover {
-    background-color: #0056b3;
-}
-
-/* Alert Styles */
-.alert {
-    padding: 15px;
-    background-color: #4CAF50;
-    color: white;
-    margin-top: 20px;
-    border-radius: 5px;
-}
-
-.alert.success {
-    background-color: #28a745;
-}
-
-/* Footer Styles */
-footer {
-    background-color: #333;
-    color: white;
+.site-footer {
+    background: #333;
+    color: #fff;
     text-align: center;
     padding: 10px;
+    position: relative;
+    bottom: 0;
 }
